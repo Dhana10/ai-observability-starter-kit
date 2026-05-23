@@ -1,0 +1,33 @@
+{
+  "tc-050-volume-success": {
+    "rows": []
+  },
+  "tc-051-latency-percentiles-ms": {
+    "rows": [
+      {
+        "n": 0,
+        "p50_ms": null,
+        "p90_ms": null,
+        "p95_ms": null,
+        "p99_ms": null,
+        "avg_ms": "NaN",
+        "max_ms": null
+      }
+    ]
+  },
+  "tc-052-by-prompt-category": {
+    "rows": []
+  },
+  "tc-053-token-usage": {
+    "rows": [
+      {
+        "n": 0,
+        "with_token_attrs": 0,
+        "sum_input": 0,
+        "sum_output": 0,
+        "avg_input": "NaN",
+        "avg_output": "NaN"
+      }
+    ]
+  }
+}

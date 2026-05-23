@@ -1,0 +1,581 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "AI agent observability companion dashboard. Pairs with the Microsoft 'Agent Framework', 'Agent Framework workflow', and 'Foundry' prebuilt dashboards. Queries target the Application Insights schema emitted by agent-framework + agent-framework-foundry-hosting with ENABLE_INSTRUMENTATION=true.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "${ds_azmon}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "dependencies\n| extend _name = tostring(column_ifexists(\"name\", column_ifexists(\"Name\", \"\")))\n| where _name has \"invoke_agent\"\n| extend raw_cd = tostring(column_ifexists(\"customDimensions\", \"\"))\n| extend raw_props = tostring(column_ifexists(\"Properties\", \"\"))\n| extend bag = coalesce(parse_json(raw_cd), parse_json(raw_props))\n| extend model = coalesce(tostring(bag[\"gen_ai.request.model\"]), \"unknown-model\")\n| extend in_tok = toint(bag[\"gen_ai.usage.input_tokens\"]), out_tok = toint(bag[\"gen_ai.usage.output_tokens\"])\n| where isnotnull(in_tok) or isnotnull(out_tok)\n| extend ts = coalesce(todatetime(column_ifexists(\"timestamp\", \"\")), todatetime(column_ifexists(\"TimeGenerated\", \"\")))\n| summarize input_tokens = sum(in_tok), output_tokens = sum(out_tok) by timestamp = bin(ts, 5m), model\n| order by timestamp asc",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Token usage by model (input + output)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "${ds_azmon}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "p95 ms",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where name startswith \"execute_tool\" or name startswith \"gen_ai\"\n| extend raw_cd = tostring(column_ifexists(\"customDimensions\", \"\"))\n| extend raw_props = tostring(column_ifexists(\"Properties\", \"\"))\n| extend bag = coalesce(parse_json(raw_cd), parse_json(raw_props))\n| extend tool = coalesce(tostring(bag[\"gen_ai.tool.name\"]), name)\n| extend dur_ms = todouble(column_ifexists(\"duration\", column_ifexists(\"DurationMs\", real(null))))\n| summarize p95_ms = round(percentile(dur_ms, 95), 1) by tool\n| order by p95_ms desc",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Tool call p95 latency (ms) by tool",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "${ds_azmon}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where name startswith \"invoke_agent\"\n| extend success_b = tobool(column_ifexists(\"success\", column_ifexists(\"Success\", \"false\")))\n| summarize total = count(), failed = countif(success_b == false)\n| extend error_rate = round(100.0 * failed / total, 2)\n| project error_rate",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Agent request error rate (%)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "${ds_azmon}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 5 },
+              { "color": "red", "value": 20 }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 8 },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where name startswith \"execute_tool\" or name startswith \"chat\" or name startswith \"invoke_agent\"\n| extend success_b = tobool(column_ifexists(\"success\", column_ifexists(\"Success\", \"false\")))\n| summarize total = count(), failed = countif(success_b == false)\n| extend error_rate = round(100.0 * failed / total, 2)\n| project error_rate",
+            "resources": ["${appi_resource}"],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Tool / model error rate (%)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "${ds_azmon}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where name startswith \"invoke_agent\"\n| extend raw_cd = tostring(column_ifexists(\"customDimensions\", \"\"))\n| extend raw_props = tostring(column_ifexists(\"Properties\", \"\"))\n| extend bag = coalesce(parse_json(raw_cd), parse_json(raw_props))\n| extend agent = coalesce(tostring(bag[\"gen_ai.agent.name\"]), \"unknown-agent\")\n| extend ok = iff(tobool(column_ifexists(\"success\", column_ifexists(\"Success\", \"false\"))) == true, \"success\", \"error\")\n| summarize n = count() by bin(timestamp, $__interval), agent, ok\n| order by timestamp asc",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Agent run rate (stacked, by agent and outcome)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "${ds_azmon}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "turns"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "lcd",
+                  "type": "gauge",
+                  "valueDisplayMode": "color"
+                }
+              },
+              {
+                "id": "max",
+                "value": 20
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "turns"
+          }
+        ]
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where name startswith \"invoke_agent\"\n| extend raw_cd = tostring(column_ifexists(\"customDimensions\", \"\"))\n| extend raw_props = tostring(column_ifexists(\"Properties\", \"\"))\n| extend bag = coalesce(parse_json(raw_cd), parse_json(raw_props))\n| extend agent = coalesce(tostring(bag[\"gen_ai.agent.name\"]), \"unknown-agent\")\n| summarize turns = count(), last_seen = max(timestamp) by trace_id = operation_Id, agent\n| order by turns desc\n| take 50",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Sessions: turn count and conversation count (top 50)",
+      "type": "table"
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 39,
+  "tags": [
+    "ai-agent",
+    "observability",
+    "app-insights"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "label": "Azure Monitor data source",
+        "name": "ds_azmon",
+        "options": [],
+        "query": "grafana-azure-monitor-datasource",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "463a82d4-1896-4332-aeeb-618ee5a5aa93",
+          "value": "463a82d4-1896-4332-aeeb-618ee5a5aa93"
+        },
+        "description": "Azure subscription ID containing the Application Insights resource",
+        "hide": 0,
+        "label": "Subscription ID",
+        "name": "subscription",
+        "options": [
+          {
+            "selected": true,
+            "text": "463a82d4-1896-4332-aeeb-618ee5a5aa93",
+            "value": "463a82d4-1896-4332-aeeb-618ee5a5aa93"
+          }
+        ],
+        "query": "463a82d4-1896-4332-aeeb-618ee5a5aa93",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs2-foundry/providers/microsoft.insights/components/appi-b5egolfzm3bew",
+          "value": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs2-foundry/providers/microsoft.insights/components/appi-b5egolfzm3bew"
+        },
+        "description": "Full Application Insights resource ID",
+        "hide": 0,
+        "label": "Application Insights resource ID",
+        "name": "appi_resource",
+        "options": [
+          {
+            "selected": true,
+            "text": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs2-foundry/providers/microsoft.insights/components/appi-b5egolfzm3bew",
+            "value": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs2-foundry/providers/microsoft.insights/components/appi-b5egolfzm3bew"
+          }
+        ],
+        "query": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs2-foundry/providers/microsoft.insights/components/appi-b5egolfzm3bew",
+        "skipUrlSync": false,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "AI Agent Observability (companion)",
+  "uid": "ai-agent-observability-companion",
+  "weekStart": ""
+}

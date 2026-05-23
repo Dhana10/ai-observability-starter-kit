@@ -1,0 +1,50 @@
+{
+  "eval_id": "eval_0e5cd8d30d8b4f8492f8f864264b7e2f",
+  "run_id": "evalrun_cb1e1ae01d1341b68b0d52e923047959",
+  "status": "completed",
+  "result_counts": {
+    "errored": 0,
+    "failed": 12,
+    "passed": 8,
+    "total": 20,
+    "skipped": 0
+  },
+  "per_testing_criteria_results": [
+    {
+      "failed": 5,
+      "passed": 15,
+      "testing_criteria": "intent_resolution",
+      "errored": 0,
+      "skipped": 0
+    },
+    {
+      "failed": 12,
+      "passed": 8,
+      "testing_criteria": "task_adherence",
+      "errored": 0,
+      "skipped": 0
+    },
+    {
+      "failed": 2,
+      "passed": 18,
+      "testing_criteria": "coherence",
+      "errored": 0,
+      "skipped": 0
+    },
+    {
+      "failed": 0,
+      "passed": 20,
+      "testing_criteria": "fluency",
+      "errored": 0,
+      "skipped": 0
+    },
+    {
+      "failed": 5,
+      "passed": 15,
+      "testing_criteria": "relevance",
+      "errored": 0,
+      "skipped": 0
+    }
+  ],
+  "report_url": "https://ai.azure.com/nextgen/r/RjqC1BiWQzKu62GO5aWqkw,rg-aiobs2-foundry,,ai-account-b5egolfzm3bew,ai-project-aiobs2-foundry/build/evaluations/eval_0e5cd8d30d8b4f8492f8f864264b7e2f/run/evalrun_cb1e1ae01d1341b68b0d52e923047959"
+}

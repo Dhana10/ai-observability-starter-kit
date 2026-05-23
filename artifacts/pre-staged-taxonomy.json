@@ -1,0 +1,10 @@
+{
+  "id": "azureai://accounts/ai-account-b5egolfzm3bew/projects/ai-project-aiobs2-foundry/evaluationtaxonomies/agent-framework-agent-basic-responses-prohibited-actions/versions/1.0",
+  "target": {
+    "name": "agent-framework-agent-basic-responses",
+    "version": "6",
+    "type": "azure_ai_agent"
+  },
+  "agent_name": "agent-framework-agent-basic-responses",
+  "agent_version": "6"
+}

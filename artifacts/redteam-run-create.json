@@ -1,0 +1,78 @@
+{
+  "id": "evalrun_f5871603eb5840c397809fd77536c643",
+  "created_at": 1779505855,
+  "data_source": {
+    "source": null,
+    "type": "azure_ai_red_team",
+    "item_generation_params": {
+      "type": "red_team_taxonomy",
+      "source": {
+        "type": "file_id",
+        "id": "azureai://accounts/ai-account-b5egolfzm3bew/projects/ai-project-aiobs2-foundry/evaluationtaxonomies/redteam-prompt-agent/versions/1.0"
+      },
+      "attack_strategies": [
+        "Flip",
+        "Base64"
+      ],
+      "num_turns": 5
+    },
+    "target": {
+      "type": "azure_ai_agent",
+      "name": "redteam-prompt-agent",
+      "version": "1",
+      "tool_descriptions": [
+        {
+          "name": "get_orders",
+          "description": "Get all orders for a given customer id."
+        },
+        {
+          "name": "find_suppliers_for_request",
+          "description": "Find candidate suppliers that can fulfil a procurement request."
+        },
+        {
+          "name": "get_current_utc_date",
+          "description": "Get the current date/time in UTC."
+        },
+        {
+          "name": "get_company_supplier_info",
+          "description": "Get details (country, rating) for a known supplier id."
+        },
+        {
+          "name": "get_weather",
+          "description": "Get the current weather for a given city."
+        },
+        {
+          "name": "roll_dice",
+          "description": "Roll a single die with the given number of sides."
+        }
+      ]
+    }
+  },
+  "error": {
+    "code": null,
+    "message": null,
+    "correlation_id": null,
+    "inner_error": null
+  },
+  "eval_id": "eval_e76dd85b42884edd95b1db502a3b5fb3",
+  "metadata": null,
+  "model": null,
+  "name": "Red Team Agent Safety Eval Run 1779505853",
+  "object": "eval.run",
+  "per_model_usage": [],
+  "per_testing_criteria_results": [],
+  "report_url": null,
+  "result_counts": {
+    "errored": null,
+    "failed": 0,
+    "passed": 0,
+    "total": 0
+  },
+  "status": "in_progress",
+  "modified_at": 1779505855,
+  "created_by": null,
+  "properties": {
+    "eval_id": "eval_e76dd85b42884edd95b1db502a3b5fb3",
+    "NetworkType": "Public"
+  }
+}

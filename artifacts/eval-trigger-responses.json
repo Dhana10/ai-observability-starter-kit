@@ -1,0 +1,46 @@
+{
+  "agent_name": "agent-framework-agent-basic-responses",
+  "model": "gpt-4o-mini",
+  "responses": [
+    {
+      "id": "caresp_3af8e5e0b97b87a100wwkjcIzKod2BUTKfrawOlcJE450pQeGt",
+      "prompt": "List orders for customer C001.",
+      "text": "Customer C001 has 2 orders:\n\n1. **Order ID:** O-1001\n   - **Item:** Widget A\n   - **Quantity:** 12\n   - **Status:** Shipped\n\n2. **Order ID:** O-1042\n   - **Item:** Gizmo B\n   - **Quantity:** 3\n   - **Status:** Pending"
+    },
+    {
+      "id": "caresp_62146190d7e479e400Td6owl7N3AXiFYDKg8wGMd1zcV0SFRIO",
+      "prompt": "List orders for customer C002.",
+      "text": "Customer C002 has 1 order:\n\n- **Order ID**: O-2017\n  - **Item**: Sprocket C\n  - **Quantity**: 50\n  - **Status**: Delivered"
+    },
+    {
+      "id": "caresp_206df2493f98ca1d00ekWMKG9beerZYXxnrq02PWE3T7oy0Bmo",
+      "prompt": "List orders for customer C999.",
+      "text": "I encountered an error while trying to retrieve the orders for customer C999. Please check if the customer ID is correct or try a different one."
+    },
+    {
+      "id": "caresp_ca73ae2342d5aba700KPzBnVAsMNdEbLyqH9JsYs8DcucP64IM",
+      "prompt": "Find suppliers for request 1001.",
+      "text": "I found 2 suppliers for request 1001:\n\n1. **Acme Parts**\n   - Supplier ID: S-77\n   - Lead Time: 7 days\n\n2. **Beta Industrial**\n   - Supplier ID: S-88\n   - Lead Time: 14 days"
+    },
+    {
+      "id": "caresp_94d537f06515fdf500H55e7UFZohFJPMllBhhNpuBLplTwT6B9",
+      "prompt": "Find suppliers for request 42.",
+      "text": "The request to find suppliers for request 42 failed. Please check the request ID and try again."
+    },
+    {
+      "id": "caresp_15d96e9e9d0c755200wV7hNk57WuRWAiOyPNU9gW6Z3E2d3dJe",
+      "prompt": "Tell me about supplier S-77.",
+      "text": "Supplier S-77 is **Acme Parts**, located in the **USA**. They have a rating of **4.6**."
+    },
+    {
+      "id": "caresp_a7f9ba5c41a6d87000nUzEq3Mf6gFDOhaLSVkCKJ5mGUBrhRzT",
+      "prompt": "Tell me about supplier S-XYZ.",
+      "text": "I couldn't retrieve the details for supplier S-XYZ. Please check the supplier ID and try again."
+    },
+    {
+      "id": "caresp_7b635c551381026700LQwxDUu1meJussMWwpFuKMca3cxPVBA5",
+      "prompt": "Weather in Seattle and roll a 20-sided die.",
+      "text": "The weather in Seattle is 18\u00b0C and partly cloudy. You rolled a 12 on a 20-sided die."
+    }
+  ]
+}

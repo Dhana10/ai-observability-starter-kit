@@ -1,0 +1,33 @@
+What is Microsoft Foundry in one sentence?
+Summarize what hosted agents are in Microsoft Foundry.
+List three benefits of Microsoft Foundry hosted agents.
+Explain what scale-to-zero means for a Foundry hosted agent.
+What is Application Insights used for in a Foundry agent setup?
+What does OpenTelemetry give you that App Insights alone does not?
+List three OTel GenAI semantic conventions a Foundry agent emits.
+Describe what the Foundry Agent Monitoring Dashboard shows.
+Name three KPI cards on the Foundry Agent Monitoring Dashboard.
+What is the difference between built-in and custom evaluators in Foundry?
+Give one example of an Agent-category built-in evaluator.
+Give one example of a Risk and Safety built-in evaluator.
+Explain Intent Resolution in one sentence.
+Explain Tool Call Accuracy in one sentence.
+Explain Task Adherence in one sentence.
+What is continuous evaluation in Foundry?
+What is the AI Red Teaming Agent in Foundry?
+Define Attack Success Rate.
+What does PyRIT contribute to red teaming evaluations?
+What is an evaluation taxonomy in Foundry red teaming?
+List two multi-turn attack strategies the AI Red Teaming Agent supports.
+Why would I want managed identity instead of a key for App Insights ingestion?
+What role does a Foundry project managed identity need to read traces for evaluations?
+What is the purpose of the AcrPull role for a project managed identity?
+What does azd ai agent init do at a high level?
+What does azd provision deploy for a hosted agent project?
+What does azd deploy do for a hosted agent project?
+Name one common cause of empty cards on the Monitor tab.
+Why might continuous evaluation rules fail to produce results?
+What is the recommended Python version for the Foundry SDK?
+What does the AZURE_AI_PROJECT_ENDPOINT environment variable point to?
+What is the maximum recommended max_hourly_runs for continuous evaluation in a demo?
+Recommend three prompts for warming up a hosted agent after scale-to-zero.

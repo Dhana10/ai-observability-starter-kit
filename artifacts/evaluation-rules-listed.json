@@ -1,0 +1,24 @@
+[
+  {
+    "id": "demo-continuous-eval",
+    "displayName": "Demo continuous eval",
+    "description": "Runs on every response completion for the demo agent",
+    "systemData": {
+      "createdAt": "05/20/2026 05:22:34",
+      "createdBy": "",
+      "modifiedAt": "",
+      "modifiedBy": ""
+    },
+    "action": {
+      "type": "continuousEvaluation",
+      "evalId": "eval_de1054c40d7343e995b7c5d54bb83bc7",
+      "maxHourlyRuns": 100,
+      "samplingRate": null
+    },
+    "filter": {
+      "agentName": "agent-framework-agent-basic-responses"
+    },
+    "eventType": "responseCompleted",
+    "enabled": true
+  }
+]

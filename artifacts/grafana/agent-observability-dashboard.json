@@ -1,0 +1,1067 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": null,
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Agent Observability Dashboard - GenAI Agent Operations, Token Usage, Model Performance",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Agent Summary Statistics",
+      "description": "Top-level counters for agent invocations across the selected time range.",
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "${ds_azmon}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1001,
+      "pluginVersion": "8.0.0",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Operations"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Total Operations"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "blue",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Input Tokens"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "purple"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Total Input Tokens"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "purple",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Output Tokens"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Total Output Tokens"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg Response Time"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Avg Response Time"
+              },
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "orange",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "graphMode": "none",
+        "orientation": "vertical",
+        "textMode": "value_and_name",
+        "colorMode": "background",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "${ds_azmon}"
+          },
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"invoke_agent\"\n| summarize total=count()\n| project [\"Total Operations\"] = todouble(total)",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        },
+        {
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "${ds_azmon}"
+          },
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"chat \"\n| extend input_tokens = todouble(customDimensions[\"gen_ai.usage.input_tokens\"])\n| summarize total=sum(input_tokens)\n| project [\"Total Input Tokens\"] = todouble(total)",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "B",
+          "subscription": "${subscription}"
+        },
+        {
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "${ds_azmon}"
+          },
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"chat \"\n| extend output_tokens = todouble(customDimensions[\"gen_ai.usage.output_tokens\"])\n| summarize total=sum(output_tokens)\n| project [\"Total Output Tokens\"] = todouble(total)",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "C",
+          "subscription": "${subscription}"
+        },
+        {
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "${ds_azmon}"
+          },
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"invoke_agent\"\n| summarize total=avg(duration)\n| project [\"Avg Response Time\"] = todouble(total)",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "D",
+          "subscription": "${subscription}"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Chat & Tool Summary",
+      "description": "Chat session, LLM call, and tool execution counters.",
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "${ds_azmon}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 1002,
+      "pluginVersion": "8.0.0",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "LLM Calls"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "LLM Calls"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "blue",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Chat Sessions"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Chat Sessions"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tool Calls"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "purple"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Tool Calls"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "purple",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg Chat Latency"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Avg Chat Latency"
+              },
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "orange",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "graphMode": "none",
+        "orientation": "vertical",
+        "textMode": "value_and_name",
+        "colorMode": "background",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "${ds_azmon}"
+          },
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"chat \"\n| summarize total=count()\n| project [\"LLM Calls\"] = todouble(total)",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        },
+        {
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "${ds_azmon}"
+          },
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"invoke_agent\"\n| summarize total=dcount(operation_Id)\n| project [\"Chat Sessions\"] = todouble(total)",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "B",
+          "subscription": "${subscription}"
+        },
+        {
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "${ds_azmon}"
+          },
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"execute_tool\"\n| summarize total=count()\n| project [\"Tool Calls\"] = todouble(total)",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "C",
+          "subscription": "${subscription}"
+        },
+        {
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "${ds_azmon}"
+          },
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"chat \"\n| summarize total=avg(duration)\n| project [\"Avg Chat Latency\"] = todouble(total)",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "D",
+          "subscription": "${subscription}"
+        }
+      ]
+    },
+    {
+      "datasource": null,
+      "description": "Operations over time by type",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "Operations",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 7
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [
+            "total"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "pluginVersion": "8.0.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "union\n  (dependencies | where timestamp > ago(24h) | where name startswith \"invoke_agent\" | extend op = \"invoke_agent\"),\n  (dependencies | where timestamp > ago(24h) | where name startswith \"chat \" | extend op = \"chat\"),\n  (dependencies | where timestamp > ago(24h) | where name startswith \"execute_tool\" | extend op = \"execute_tool\")\n| summarize count() by bin(timestamp, 1h), op\n| order by timestamp asc",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Operations Over Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": null,
+      "description": "Token consumption over time by model",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "Tokens",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 7
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [
+            "total"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "pluginVersion": "8.0.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"chat \"\n| extend model = tostring(split(name, ' ')[1]), input_tokens = todouble(customDimensions[\"gen_ai.usage.input_tokens\"]), output_tokens = todouble(customDimensions[\"gen_ai.usage.output_tokens\"])\n| summarize total_tokens=sum(input_tokens)+sum(output_tokens) by bin(timestamp, 1h), model\n| order by timestamp asc",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Token Consumption Over Time by Model",
+      "type": "timeseries"
+    },
+    {
+      "datasource": null,
+      "description": "Model usage distribution",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 15
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "values": true,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^count_$/"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.0.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"chat \"\n| extend model = tostring(split(name, ' ')[1])\n| summarize count() by model\n| order by count_ desc",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "table"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Model Usage Distribution",
+      "type": "piechart"
+    },
+    {
+      "datasource": null,
+      "description": "Response duration by model - average vs P90",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "Duration (ms)",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 15
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "pluginVersion": "8.0.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"chat \"\n| extend model = tostring(split(name, ' ')[1])\n| summarize avg_duration=avg(duration), p90_duration=percentile(duration, 90) by model",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Response Duration by Model (Avg / P90)",
+      "type": "barchart"
+    },
+    {
+      "datasource": null,
+      "description": "Time to first token by model - P50 vs P90",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "TTFT (ms)",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 15
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "pluginVersion": "8.0.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "dependencies\n| where timestamp > ago(24h)\n| where name startswith \"chat \"\n| extend model = tostring(split(name, ' ')[1])\n| summarize p50_latency=percentile(duration, 50), p90_latency=percentile(duration, 90) by model",
+            "resources": [
+              "${appi_resource}"
+            ],
+            "resultFormat": "time_series"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A",
+          "subscription": "${subscription}"
+        }
+      ],
+      "title": "Chat Latency by Model (P50 / P90)",
+      "type": "barchart"
+    }
+  ],
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": [
+    "agent-observability",
+    "genai",
+    "foundry",
+    "GrafanaDashboardResourceType=microsoft.insights/components"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "grafana-azure-monitor-datasource",
+          "value": "grafana-azure-monitor-datasource"
+        },
+        "hide": 0,
+        "label": "Azure Monitor data source",
+        "name": "ds_azmon",
+        "options": [],
+        "query": "grafana-azure-monitor-datasource",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "name": "datasource",
+        "type": "datasource",
+        "datasource": "grafana-azure-monitor-datasource",
+        "current": {
+          "selected": true,
+          "text": "Azure Monitor",
+          "value": "Azure Monitor"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "Azure Monitor",
+            "value": "Azure Monitor"
+          }
+        ],
+        "hide": 2
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Subscription",
+        "multi": false,
+        "name": "subscription",
+        "options": [
+          {
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs2-foundry/providers/microsoft.insights/components/appi-b5egolfzm3bew",
+          "value": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs2-foundry/providers/microsoft.insights/components/appi-b5egolfzm3bew"
+        },
+        "description": "Full Application Insights resource ID (format: /subscriptions/{subId}/resourceGroups/{rg}/providers/microsoft.insights/components/{name})",
+        "hide": 0,
+        "label": "Application Insights resource ID",
+        "name": "appi_resource",
+        "options": [
+          {
+            "selected": true,
+            "text": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs2-foundry/providers/microsoft.insights/components/appi-b5egolfzm3bew",
+            "value": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs2-foundry/providers/microsoft.insights/components/appi-b5egolfzm3bew"
+          }
+        ],
+        "query": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs2-foundry/providers/microsoft.insights/components/appi-b5egolfzm3bew",
+        "skipUrlSync": false,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "browser",
+  "title": "Agent Observability Dashboard",
+  "uid": "agent-observability-custom",
+  "version": 2,
+  "refresh": "30s",
+  "datasources": [
+    {
+      "type": "grafana-azure-monitor-datasource",
+      "uid": "${ds_azmon}"
+    }
+  ]
+}

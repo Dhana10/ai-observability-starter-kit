@@ -1,0 +1,21 @@
+name: ComplianceCheck
+display_name: Compliance Phrase Check
+description: >
+  Pass when the response contains the literal disclaimer phrase
+  "This response is for informational purposes only." Used as a
+  deterministic compliance gate alongside built-in evaluators.
+type: code
+version: "1.0.0"
+inputs:
+  response:
+    type: string
+    description: Final agent response text.
+outputs:
+  compliance_pass:
+    type: number
+    description: 1.0 if disclaimer present, 0.0 otherwise.
+  compliance_pass_label:
+    type: string
+  compliance_reason:
+    type: string
+entry_point: custom_compliance_phrase:evaluate

@@ -1,0 +1,80 @@
+graph LR
+    subgraph Foundry["Microsoft Foundry Project"]
+        direction LR
+
+        subgraph Models["Model Deployments"]
+            direction TB
+            M1["gpt-4o-mini\n(primary)"]
+            M2["gpt-5-mini\n(comparison)"]
+            M3["gpt-4.1-mini\n(comparison)"]
+        end
+
+        subgraph Agents["4 Hosted Agents · ACR Containers"]
+            direction TB
+            A1["basic-responses"]
+            A2["gpt5-mini"]
+            A3["gpt41-mini"]
+            A4["broken-model\n(intentional 404)"]
+        end
+
+        M1 --> A1
+        M2 --> A2
+        M3 --> A3
+        M1 -. "missing deployment" .-> A4
+
+        subgraph Observability["Application Insights\n+ Log Analytics"]
+            OTel["OpenTelemetry GenAI Spans\ninvoke_agent · chat · execute_tool"]
+        end
+
+        A1 --> OTel
+        A2 --> OTel
+        A3 --> OTel
+        A4 --> OTel
+
+        subgraph Evaluation["Evaluation + Safety"]
+            direction TB
+            CE["Continuous Eval\n5 evaluators + custom"]
+            BE["Batch Eval\n5 × 8 prompts"]
+            RT["Red Team\n3 strategies"]
+        end
+
+        OTel --> CE
+        OTel --> BE
+        OTel --> RT
+
+        subgraph Output["Alerts + Dashboards"]
+            direction TB
+            AL["Scheduled Query Alerts\nerror count · p95 latency"]
+            DA["App Insights Agents Pane\nGrafana · Custom JSON"]
+        end
+
+        CE --> AL
+        BE --> DA
+        RT --> DA
+        CE --> DA
+    end
+
+    style Foundry fill:#1a1a2e,stroke:#00bcd4,stroke-width:2px,color:#e0e0e0
+    style Models fill:#16213e,stroke:#4fc3f7,stroke-width:1px,color:#e0e0e0
+    style Agents fill:#16213e,stroke:#4fc3f7,stroke-width:1px,color:#e0e0e0
+    style Observability fill:#0f3460,stroke:#29b6f6,stroke-width:1px,color:#e0e0e0
+    style Evaluation fill:#1a1a2e,stroke:#66bb6a,stroke-width:1px,color:#e0e0e0
+    style Output fill:#1a1a2e,stroke:#ffa726,stroke-width:1px,color:#e0e0e0
+
+    style M1 fill:#1565c0,stroke:#42a5f5,color:#fff
+    style M2 fill:#1565c0,stroke:#42a5f5,color:#fff
+    style M3 fill:#1565c0,stroke:#42a5f5,color:#fff
+
+    style A1 fill:#2e7d32,stroke:#66bb6a,color:#fff
+    style A2 fill:#2e7d32,stroke:#66bb6a,color:#fff
+    style A3 fill:#2e7d32,stroke:#66bb6a,color:#fff
+    style A4 fill:#c62828,stroke:#ef5350,color:#fff
+
+    style OTel fill:#0d47a1,stroke:#42a5f5,color:#fff
+
+    style CE fill:#1b5e20,stroke:#66bb6a,color:#fff
+    style BE fill:#1b5e20,stroke:#66bb6a,color:#fff
+    style RT fill:#e65100,stroke:#ff9800,color:#fff
+
+    style AL fill:#f57f17,stroke:#ffb300,color:#000
+    style DA fill:#4527a0,stroke:#7e57c2,color:#fff
