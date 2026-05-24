@@ -2,7 +2,7 @@
 
 End-to-end reference implementation for observing, evaluating, and red-teaming AI agents on **Microsoft Foundry**. Provisions infrastructure, deploys four containerized agents (three models + one intentionally broken), generates traffic, wires up continuous and batch evaluation, runs red-team attacks, and configures alerts, all in a single orchestrated pipeline.
 
-![AI Observability Starter Kit](docs/AI-Obs-StarterKit.png)
+![AI Observability Starter Kit](docs/AI-Obs-StarterKit-v3.png)
 
 ## Why This Exists
 
