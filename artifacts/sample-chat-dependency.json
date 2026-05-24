@@ -14,7 +14,7 @@
     "Data": "",
     "DependencyType": "InProc",
     "DurationMs": "6297",
-    "IKey": "42ae167c-a343-45be-af19-594588685298",
+    "IKey": "<app-insights-instrumentation-key>",
     "Id": "dc10b72bc4febc03",
     "ItemCount": "1",
     "Measurements": "None",
@@ -23,10 +23,10 @@
     "OperationName": "chat gpt-4o-mini",
     "ParentId": "52567939cb9fb72b",
     "PerformanceBucket": "3sec-7sec",
-    "Properties": "{\"microsoft.foundry.project.id\":\"/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs-foundry-20260520/providers/Microsoft.CognitiveServices/accounts/ai-account-eyfs7o7lvdq7e/projects/ai-project-aiobs-foundry-20260520\",\"gen_ai.input.messages\":\"[{\\\"role\\\": \\\"system\\\", \\\"parts\\\": [{\\\"type\\\": \\\"text\\\", \\\"content\\\": \\\"You are a friendly assistant. Keep your answers brief.\\\"}]}, {\\\"role\\\": \\\"user\\\", \\\"parts\\\": [{\\\"type\\\": \\\"text\\\", \\\"content\\\": \\\"Reply with the digit 1 and nothing else.\\\"}]}]\",\"gen_ai.system_instructions\":\"[{\\\"type\\\": \\\"text\\\", \\\"content\\\": \\\"You are a friendly assistant. Keep your answers brief.\\\"}]\",\"gen_ai.request.choice.count\":\"1\",\"gen_ai.operation.name\":\"chat\",\"gen_ai.provider.name\":\"azure.ai.foundry\",\"gen_ai.request.model\":\"gpt-4o-mini\",\"gen_ai.usage.input_tokens\":\"32\",\"gen_ai.usage.output_tokens\":\"2\",\"gen_ai.output.messages\":\"[{\\\"role\\\": \\\"assistant\\\", \\\"parts\\\": [{\\\"type\\\": \\\"text\\\", \\\"content\\\": \\\"1\\\"}]}]\",\"gen_ai.agent.name\":\"agent-framework-agent-basic-responses\",\"gen_ai.agent.version\":\"2\",\"gen_ai.agent.id\":\"agent-framework-agent-basic-responses:2\",\"_MS.GenAIContentId\":\"c0ffc3fb-00c3-4f6f-a63c-8ef4bb1969a0\",\"_MS.ResourceAttributeId\":\"468d0c26-6cb8-4a19-b7ab-5e52292e3072\",\"gen_ai.response.id\":\"resp_02d26bc62076e72f016a0dbbbeb3348196a6701185fb752502\",\"gen_ai.response.model\":\"gpt-4o-mini-2024-07-18\"}",
+    "Properties": "{\"microsoft.foundry.project.id\":\"/subscriptions/<subscription-id>/resourceGroups/rg-<env-name>/providers/Microsoft.CognitiveServices/accounts/ai-account-<token>/projects/ai-project-<env-name>\",\"gen_ai.input.messages\":\"[{\\\"role\\\": \\\"system\\\", \\\"parts\\\": [{\\\"type\\\": \\\"text\\\", \\\"content\\\": \\\"You are a friendly assistant. Keep your answers brief.\\\"}]}, {\\\"role\\\": \\\"user\\\", \\\"parts\\\": [{\\\"type\\\": \\\"text\\\", \\\"content\\\": \\\"Reply with the digit 1 and nothing else.\\\"}]}]\",\"gen_ai.system_instructions\":\"[{\\\"type\\\": \\\"text\\\", \\\"content\\\": \\\"You are a friendly assistant. Keep your answers brief.\\\"}]\",\"gen_ai.request.choice.count\":\"1\",\"gen_ai.operation.name\":\"chat\",\"gen_ai.provider.name\":\"azure.ai.foundry\",\"gen_ai.request.model\":\"gpt-4o-mini\",\"gen_ai.usage.input_tokens\":\"32\",\"gen_ai.usage.output_tokens\":\"2\",\"gen_ai.output.messages\":\"[{\\\"role\\\": \\\"assistant\\\", \\\"parts\\\": [{\\\"type\\\": \\\"text\\\", \\\"content\\\": \\\"1\\\"}]}]\",\"gen_ai.agent.name\":\"agent-framework-agent-basic-responses\",\"gen_ai.agent.version\":\"2\",\"gen_ai.agent.id\":\"agent-framework-agent-basic-responses:2\",\"_MS.GenAIContentId\":\"<ms-genai-content-id>\",\"_MS.ResourceAttributeId\":\"<ms-resource-attribute-id>\",\"gen_ai.response.id\":\"resp_02d26bc62076e72f016a0dbbbeb3348196a6701185fb752502\",\"gen_ai.response.model\":\"gpt-4o-mini-2024-07-18\"}",
     "ReferencedItemId": "",
     "ReferencedType": "",
-    "ResourceGUID": "f0261b54-f5d3-468f-ae1e-8519304c75bd",
+    "ResourceGUID": "<resource-guid>",
     "ResultCode": "0",
     "SDKVersion": "ulm_py3.12.13:otel1.40.0:ext1.0.0b52",
     "SessionId": "",
@@ -35,12 +35,13 @@
     "SyntheticSource": "",
     "TableName": "PrimaryResult",
     "Target": "chat gpt-4o-mini",
-    "TenantId": "7c4aa12e-4b46-4997-83f4-8c7422fc5538",
+    "TenantId": "<tenant-id>",
     "TimeGenerated": "2026-05-20T13:48:45.874351Z",
     "Type": "AppDependencies",
     "UserAccountId": "",
     "UserAuthenticatedId": "",
     "UserId": "",
-    "_ResourceId": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourcegroups/rg-aiobs-foundry-20260520/providers/microsoft.insights/components/appi-eyfs7o7lvdq7e"
+    "_ResourceId": "/subscriptions/<subscription-id>/resourcegroups/rg-<env-name>/providers/microsoft.insights/components/appi-<token>"
   }
 ]
+

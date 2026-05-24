@@ -12,7 +12,7 @@
     "ClientStateOrProvince": "Virginia",
     "ClientType": "PC",
     "DurationMs": "6617",
-    "IKey": "42ae167c-a343-45be-af19-594588685298",
+    "IKey": "<app-insights-instrumentation-key>",
     "Id": "fd909976b0e1450e",
     "ItemCount": "1",
     "Measurements": "None",
@@ -22,10 +22,10 @@
     "OperationName": "invoke_agent agent-framework-agent-basic-responses:1",
     "ParentId": "8a149ab4e98c9ff5",
     "PerformanceBucket": "3sec-7sec",
-    "Properties": "{\"_MS.ResourceAttributeId\":\"b9982854-b68f-48bc-8d54-0c53fb86dce9\",\"gen_ai.system\":\"azure.ai.agentserver\",\"microsoft.session.id\":\"c7c29a629a46036d030274dec7cd5852236fff0a143c82cba5e520521458680\",\"x_request_id\":\"240d7a945a997df717d63fc76129357d\",\"gen_ai.response.id\":\"caresp_52d13f28e96b3c4100VWBrtOBVJNSERyA3uPhAICJ15wfoPk6a\",\"gen_ai.provider.name\":\"AzureAI Hosted Agents\",\"service.name\":\"azure.ai.agentserver\",\"gen_ai.operation.name\":\"invoke_agent\",\"gen_ai.request.model\":\"\",\"azure.ai.agentserver.responses.response_id\":\"caresp_52d13f28e96b3c4100VWBrtOBVJNSERyA3uPhAICJ15wfoPk6a\",\"azure.ai.agentserver.responses.conversation_id\":\"conv_52d13f28e96b3c4100wtyyA87pEyOwtgBh7R91UW4c3Xpa7xIU\",\"azure.ai.agentserver.responses.streaming\":\"True\",\"microsoft.foundry.project.id\":\"/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourceGroups/rg-aiobs-foundry-20260520/providers/Microsoft.CognitiveServices/accounts/ai-account-eyfs7o7lvdq7e/projects/ai-project-aiobs-foundry-20260520\",\"request.id\":\"240d7a945a997df717d63fc76129357d\",\"gen_ai.agent.name\":\"agent-framework-agent-basic-responses\",\"gen_ai.agent.version\":\"1\",\"gen_ai.agent.id\":\"agent-framework-agent-basic-responses:1\",\"gen_ai.conversation.id\":\"conv_52d13f28e96b3c4100wtyyA87pEyOwtgBh7R91UW4c3Xpa7xIU\"}",
+    "Properties": "{\"_MS.ResourceAttributeId\":\"<ms-resource-attribute-id>\",\"gen_ai.system\":\"azure.ai.agentserver\",\"microsoft.session.id\":\"c7c29a629a46036d030274dec7cd5852236fff0a143c82cba5e520521458680\",\"x_request_id\":\"240d7a945a997df717d63fc76129357d\",\"gen_ai.response.id\":\"caresp_52d13f28e96b3c4100VWBrtOBVJNSERyA3uPhAICJ15wfoPk6a\",\"gen_ai.provider.name\":\"AzureAI Hosted Agents\",\"service.name\":\"azure.ai.agentserver\",\"gen_ai.operation.name\":\"invoke_agent\",\"gen_ai.request.model\":\"\",\"azure.ai.agentserver.responses.response_id\":\"caresp_52d13f28e96b3c4100VWBrtOBVJNSERyA3uPhAICJ15wfoPk6a\",\"azure.ai.agentserver.responses.conversation_id\":\"conv_52d13f28e96b3c4100wtyyA87pEyOwtgBh7R91UW4c3Xpa7xIU\",\"azure.ai.agentserver.responses.streaming\":\"True\",\"microsoft.foundry.project.id\":\"/subscriptions/<subscription-id>/resourceGroups/rg-<env-name>/providers/Microsoft.CognitiveServices/accounts/ai-account-<token>/projects/ai-project-<env-name>\",\"request.id\":\"240d7a945a997df717d63fc76129357d\",\"gen_ai.agent.name\":\"agent-framework-agent-basic-responses\",\"gen_ai.agent.version\":\"1\",\"gen_ai.agent.id\":\"agent-framework-agent-basic-responses:1\",\"gen_ai.conversation.id\":\"conv_52d13f28e96b3c4100wtyyA87pEyOwtgBh7R91UW4c3Xpa7xIU\"}",
     "ReferencedItemId": "",
     "ReferencedType": "",
-    "ResourceGUID": "f0261b54-f5d3-468f-ae1e-8519304c75bd",
+    "ResourceGUID": "<resource-guid>",
     "ResultCode": "0",
     "SDKVersion": "ulm_py3.12.13:otel1.40.0:ext1.0.0b52",
     "SessionId": "",
@@ -34,13 +34,14 @@
     "Success": "True",
     "SyntheticSource": "",
     "TableName": "PrimaryResult",
-    "TenantId": "7c4aa12e-4b46-4997-83f4-8c7422fc5538",
+    "TenantId": "<tenant-id>",
     "TimeGenerated": "2026-05-20T05:15:14.627077Z",
     "Type": "AppRequests",
     "Url": "",
     "UserAccountId": "",
     "UserAuthenticatedId": "",
     "UserId": "",
-    "_ResourceId": "/subscriptions/463a82d4-1896-4332-aeeb-618ee5a5aa93/resourcegroups/rg-aiobs-foundry-20260520/providers/microsoft.insights/components/appi-eyfs7o7lvdq7e"
+    "_ResourceId": "/subscriptions/<subscription-id>/resourcegroups/rg-<env-name>/providers/microsoft.insights/components/appi-<token>"
   }
 ]
+
