@@ -35,7 +35,7 @@ pwsh -NoProfile -File scripts\validate-deployment.ps1
 pwsh -NoProfile -File scripts\teardown.ps1 -EnvName <env-name>
 ```
 
-Each phase logs to `artifacts/e2e-{timestamp}/phase-xx.log`. Skip specific phases with `-SkipPhases "9,10"`. For the full walkthrough, see [docs/starter-kit-ai-observability-v2.md](docs/starter-kit-ai-observability-v2.md).
+Each phase logs to `artifacts/e2e-{timestamp}/phase-xx.log`. Skip specific phases with `-SkipPhases "9,10"`. For the full walkthrough, see [docs/blog-starter-kit-ai-observability-v3.md](docs/blog-starter-kit-ai-observability-v3.md).
 
 ## Key Highlights
 
