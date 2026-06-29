@@ -215,6 +215,19 @@ try {
             [Environment]::SetEnvironmentVariable($Matches[1], $Matches[2], 'Process')
         }
     }
+
+    # azure.ai.agents extension expects FOUNDRY_PROJECT_ENDPOINT; Bicep outputs AZURE_AI_PROJECT_ENDPOINT.
+    $projectEndpoint = $env:AZURE_AI_PROJECT_ENDPOINT
+    if (-not $projectEndpoint) {
+        $projectEndpoint = (& $AZD env get-value AZURE_AI_PROJECT_ENDPOINT 2>$null).Trim()
+    }
+    if ($projectEndpoint -and $projectEndpoint -notmatch 'ERROR') {
+        & $AZD env set FOUNDRY_PROJECT_ENDPOINT $projectEndpoint 2>&1 | Out-Null
+        [Environment]::SetEnvironmentVariable('FOUNDRY_PROJECT_ENDPOINT', $projectEndpoint, 'Process')
+        Write-Host "Set FOUNDRY_PROJECT_ENDPOINT=$projectEndpoint"
+    } else {
+        throw 'AZURE_AI_PROJECT_ENDPOINT missing after provision; cannot deploy hosted agents.'
+    }
 } finally { Pop-Location }
 
 $ResourceGroup = $env:AZURE_RESOURCE_GROUP
