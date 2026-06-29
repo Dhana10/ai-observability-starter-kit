@@ -1,0 +1,125 @@
+name: Deploy E2E to Azure
+
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: Azure region for Foundry resources
+        required: true
+        default: eastus2
+        type: string
+      envName:
+        description: azd environment name (resource group suffix)
+        required: false
+        default: ''
+        type: string
+      maxPrompts:
+        description: Max prompts for Phase 6 seed traffic (0 = full corpus ~48)
+        required: true
+        default: '10'
+        type: string
+      skipPhases:
+        description: Comma-separated phase numbers to skip (e.g. 9,10)
+        required: false
+        default: ''
+        type: string
+
+concurrency:
+  group: deploy-e2e-azure
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Setup Azure Developer CLI
+        uses: Azure/setup-azd@v2
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: azd auth login (OIDC)
+        shell: pwsh
+        run: |
+          azd auth login `
+            --client-id $env:AZURE_CLIENT_ID `
+            --tenant-id $env:AZURE_TENANT_ID `
+            --federated-credential-provider github
+
+      - name: Enable azd alpha and install agents extension
+        shell: pwsh
+        run: |
+          azd config set alpha.all on
+          azd extension install azure.ai.agents
+
+      - name: Create Python venv and install dependencies
+        shell: pwsh
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\python.exe -m pip install --upgrade pip
+          .\.venv\Scripts\pip.exe install `
+            azure-ai-projects==2.1.0 `
+            azure-identity `
+            openai `
+            pyyaml `
+            python-dotenv `
+            azure-monitor-opentelemetry `
+            azure-monitor-query `
+            requests
+
+      - name: Resolve deployment parameters
+        id: params
+        shell: pwsh
+        run: |
+          $envName = '${{ inputs.envName }}'.Trim()
+          if (-not $envName) {
+            $envName = 'aiobs-ci-' + (Get-Date -Format 'yyyyMMdd')
+          }
+          "envName=$envName" >> $env:GITHUB_OUTPUT
+          $spOid = (az ad sp show --id $env:AZURE_CLIENT_ID --query id -o tsv).Trim()
+          "spObjectId=$spOid" >> $env:GITHUB_OUTPUT
+
+      - name: Run end-to-end deployment
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -File scripts/run-e2e.ps1 `
+            -Region '${{ inputs.region }}' `
+            -EnvName '${{ steps.params.outputs.envName }}' `
+            -SubscriptionId $env:AZURE_SUBSCRIPTION_ID `
+            -PrincipalId '${{ steps.params.outputs.spObjectId }}' `
+            -PrincipalType ServicePrincipal `
+            -MaxPrompts ${{ inputs.maxPrompts }} `
+            -SkipPhases '${{ inputs.skipPhases }}'
+
+      - name: Upload e2e logs and artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-artifacts-${{ steps.params.outputs.envName }}
+          path: |
+            artifacts/e2e-*/
+            artifacts/*.json
+          if-no-files-found: warn

@@ -21,6 +21,12 @@
 
 .PARAMETER MaxPrompts
   Maximum prompts to send in Phase 6 seed traffic. Default: 10. Use 0 for no limit (~48 prompts).
+
+.PARAMETER PrincipalId
+  Entra object id for RBAC (azd AZURE_PRINCIPAL_ID). When omitted, uses the signed-in az CLI user.
+
+.PARAMETER PrincipalType
+  Entra principal type for Bicep role assignment (User or ServicePrincipal). Default: User.
 #>
 [CmdletBinding()]
 param(
@@ -29,7 +35,9 @@ param(
     [string]$SubscriptionId,
     [string]$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path,
     [string]$SkipPhases = '',
-    [int]$MaxPrompts = 10
+    [int]$MaxPrompts = 10,
+    [string]$PrincipalId,
+    [string]$PrincipalType = 'User'
 )
 
 # Parse SkipPhases from comma-separated string to int array (pwsh -File passes arrays as strings).
@@ -141,7 +149,11 @@ Write-Host "Region:  $Region"
 Write-Host "EnvName: $EnvName"
 Write-Host "Logs:    $LogRoot"
 
-$YourPrincipalId = (az ad signed-in-user show --query id -o tsv).Trim()
+if ($PrincipalId) {
+    $YourPrincipalId = $PrincipalId.Trim()
+} else {
+    $YourPrincipalId = (az ad signed-in-user show --query id -o tsv).Trim()
+}
 if (-not $SubscriptionId) {
     $SubscriptionId = (az account show --query id -o tsv).Trim()
 }
@@ -167,6 +179,7 @@ Invoke-Phase 1 'Provision infrastructure (azd provision)' `
         & $AZD env set MODEL_SKU_NAME        GlobalStandard
         & $AZD env set MODEL_CAPACITY        30
         & $AZD env set AZURE_PRINCIPAL_ID    $YourPrincipalId
+        & $AZD env set AZURE_PRINCIPAL_TYPE  $PrincipalType
         # enableHostedAgents=true and enableCapabilityHost=false in
         # main.parameters.json. With capability host disabled, Foundry v2
         # hosted agents auto-create the project agentIdentity on first deploy.
