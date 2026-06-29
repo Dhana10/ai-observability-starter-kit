@@ -176,9 +176,9 @@ Invoke-Phase 1 'Provision infrastructure (azd provision)' `
             'n' | & $AZD env new $EnvName -l $Region --subscription $SubscriptionId
         }
         & $AZD env select $EnvName
-        & $AZD env set MODEL_DEPLOYMENT_NAME gpt-4.1-mini
-        & $AZD env set MODEL_NAME            gpt-4.1-mini
-        & $AZD env set MODEL_VERSION         2025-04-14
+        & $AZD env set MODEL_DEPLOYMENT_NAME gpt-5-mini
+        & $AZD env set MODEL_NAME            gpt-5-mini
+        & $AZD env set MODEL_VERSION         2025-08-07
         & $AZD env set MODEL_FORMAT          OpenAI
         & $AZD env set MODEL_SKU_NAME        GlobalStandard
         & $AZD env set MODEL_CAPACITY        30
