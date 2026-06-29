@@ -129,12 +129,16 @@ $azVer = (az version 2>&1 | ConvertFrom-Json).'azure-cli'
 if (-not $azVer) { throw "az CLI not found. Install via: winget install Microsoft.AzureCLI" }
 Write-Host "  [OK] az CLI $azVer" -ForegroundColor Green
 
-# Docker (required for azd deploy to push container images to ACR)
-$dockerVer = docker version --format '{{.Client.Version}}' 2>&1
-if ($LASTEXITCODE -ne 0) {
-    throw "Docker is not running. azd deploy needs Docker to build and push agent containers to ACR. Start Docker Desktop and try again."
+# Docker (local builds only; skip in CI where azure.yaml uses remoteBuild: true)
+if ($env:CI -eq 'true' -or $env:GITHUB_ACTIONS -eq 'true') {
+    Write-Host "  [OK] Docker check skipped (CI + remoteBuild)" -ForegroundColor Green
+} else {
+    $dockerVer = docker version --format '{{.Client.Version}}' 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Docker is not running. azd deploy needs Docker to build and push agent containers to ACR. Start Docker Desktop and try again."
+    }
+    Write-Host "  [OK] Docker $dockerVer" -ForegroundColor Green
 }
-Write-Host "  [OK] Docker $dockerVer" -ForegroundColor Green
 
 # az login check
 $azAccount = az account show --query '{name:name, id:id}' -o json 2>&1 | ConvertFrom-Json
